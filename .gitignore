@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# claude
+.claude/
+
+# brand assets (not for distribution)
+equ_Digital Style Guide 2024.pdf

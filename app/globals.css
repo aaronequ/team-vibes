@@ -20,6 +20,32 @@
   --font-sans: var(--font-heebo);
   --font-heading: var(--font-inter);
   --font-handwritten: var(--font-handwritten);
+
+  --color-primary: #10B981;
+  --color-primary-dark: #059669;
+  --color-secondary: #1E293B;
+  --color-accent: #F59E0B;
+  --color-text-main: #334155;
+  --color-text-light: #64748B;
+  --color-bg-main: #F8FAFC;
+  --color-bg-surface: #FFFFFF;
+
+  --animate-beat-fast: beat-fast 0.46s infinite ease-in-out;
+  --animate-beat-slow: beat-slow 1s infinite ease-in-out;
+  --animate-beat-breath: beat-breath 1.5s infinite ease-in-out;
+
+  @keyframes beat-fast {
+    0%, 100% { filter: brightness(0.92) contrast(1); }
+    50% { filter: brightness(1.15) contrast(1.05); }
+  }
+  @keyframes beat-slow {
+    0%, 100% { filter: brightness(0.95); }
+    50% { filter: brightness(1.08); }
+  }
+  @keyframes beat-breath {
+    0%, 100% { filter: brightness(0.92); }
+    50% { filter: brightness(1.04); }
+  }
 }
 
 @layer base {
@@ -46,5 +72,11 @@
 
   strong, b {
     color: var(--color-dark);
+  }
+}
+
+@layer utilities {
+  .card-shadow {
+    box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.05);
   }
 }

@@ -51,6 +51,15 @@ export default function Home() {
             together, and vibe code a working Proof of Concept with your team
             developer.
           </p>
+          <Link
+            href="/worldcup"
+            className="group mt-8 inline-flex items-center gap-2 rounded-full bg-dark px-6 py-3 font-heading text-sm font-semibold tracking-widest text-white uppercase transition-colors hover:bg-teal"
+          >
+            World Cup Sweepstakes
+            <span className="transition-transform group-hover:translate-x-1">
+              →
+            </span>
+          </Link>
         </div>
       </section>
 

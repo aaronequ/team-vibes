@@ -14,6 +14,21 @@
   --color-dark: #26272c;
   --color-dark-2: #1a1a1d;
 
+  --color-equ-teal: #46c2ac;
+  --color-equ-teal-light: #dff6ef;
+  --color-equ-salmon: #f58a8d;
+  --color-equ-salmon-light: #ffe6e0;
+  --color-equ-dark: #26272c;
+  --color-equ-dark-2: #1a1a1d;
+  --color-equ-slate: #4c4f5e;
+  --color-equ-stone: #f9f2eb;
+  --color-equ-stone-2: #f5ebe0;
+  --color-equ-stone-3: #e4d7c9;
+  --color-equ-stone-4: #c5b4a3;
+  --color-equ-red: #e31e36;
+  --color-equ-grey-light: #f8f8f8;
+  --color-equ-grey: #e0e0e0;
+
   --color-background: var(--color-white);
   --color-foreground: var(--color-dark);
 
@@ -78,5 +93,31 @@
 @layer utilities {
   .card-shadow {
     box-shadow: 0 4px 20px -4px rgba(0, 0, 0, 0.05);
+  }
+}
+
+.soccer-ball-interactive {
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #fff 0%, #f0f0f0 40%, #ccc 100%);
+  border: 2px solid var(--color-equ-dark);
+  box-shadow:
+    inset -3px -3px 0 rgba(0, 0, 0, 0.12),
+    0 4px 12px rgba(38, 39, 44, 0.2);
+  will-change: transform;
+}
+
+.soccer-ball-reaction-face {
+  animation: soccer-ball-reaction-fade 1s ease-out forwards;
+}
+
+@keyframes soccer-ball-reaction-fade {
+  0% {
+    opacity: 1;
+  }
+  70% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
   }
 }

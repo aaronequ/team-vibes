@@ -1,16 +1,16 @@
 import type { Metadata } from "next";
 
-import { WorldCupBoard } from "../components/WorldCupBoard";
+import { DisplayBoard } from "../components/DisplayBoard";
 import { loadParticipantsFile } from "../lib/participants";
 
 export function generateMetadata(): Metadata {
   return { title: `${loadParticipantsFile().title} — Display` };
 }
 
-// Pure static HTML. WorldCupBoard imports no client components and we pass no
-// interactive slots, so this route ships zero client JavaScript. Tournament
-// data comes from the hourly-revalidated `use cache` layer, so the page is
-// prerendered at build and refreshed every hour.
+// Signage board for Fusion Signage on LG webOS / older SoC webviews. Uses
+// DisplayBoard, which ships its own inline old-browser-safe CSS instead of the
+// app's Tailwind v4 styles (which those engines cannot parse). Fully
+// server-rendered static HTML, refreshed hourly via the `use cache` layer.
 export default function WorldCupDisplayPage() {
-  return <WorldCupBoard />;
+  return <DisplayBoard />;
 }

@@ -4,13 +4,13 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { ConfettiBurst } from "./ConfettiBurst";
 
 const BALL_SIZE = 88;
-const GRAVITY = 1980;
+const GRAVITY = 1650;
 const RESTITUTION = 0.72;
 const GROUND_FRICTION = 0.94;
 const ROLLING_DECELERATION = 360;
 const WALL_RESTITUTION = 0.65;
 const MIN_ROLLING_VELOCITY = 12;
-const CLICK_IMPULSE = 700;
+const CLICK_IMPULSE = 850;
 const MIN_BOUNCE_VELOCITY = 80;
 const LAUNCH_VY_THRESHOLD = -40;
 const REACTION_FADE_MS = 1000;

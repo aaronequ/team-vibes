@@ -8,9 +8,10 @@ import type {
 
 async function fetchJson<T>(path: string): Promise<T> {
   const url = `${tournamentConfig.tournamentApiBase}${path}`;
+  // No explicit cache option: the caller wraps this in a `use cache` scope
+  // (see lib/tournament/data.ts), which owns caching and revalidation.
   const response = await fetch(url, {
     headers: { Accept: "application/json" },
-    cache: "no-store",
   });
 
   if (!response.ok) {

@@ -1,8 +1,11 @@
+"use client";
+
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
+
 import type { SortMethod } from "../lib/types";
 
 interface SortDropdownProps {
-  value: SortMethod;
-  onChange: (value: SortMethod) => void;
   layout?: "inline" | "stacked";
 }
 
@@ -11,41 +14,41 @@ const OPTIONS: { value: SortMethod; label: string }[] = [
   { value: "name", label: "Name (A–Z)" },
 ];
 
-export function SortDropdown({
-  value,
-  onChange,
-  layout = "inline",
-}: SortDropdownProps) {
+export function SortDropdown({ layout = "inline" }: SortDropdownProps) {
+  const searchParams = useSearchParams();
+  const value: SortMethod =
+    searchParams.get("sort") === "name" ? "name" : "still-in-first";
   const isStacked = layout === "stacked";
 
   return (
-    <label
+    <div
       className={
         isStacked
           ? "flex flex-col gap-1.5 text-sm text-white/70"
           : "flex items-center gap-2 text-sm text-equ-slate"
       }
     >
-      <span
-        className={
-          isStacked
-            ? "text-xs uppercase tracking-wide text-white/50"
-            : undefined
-        }
-      >
-        Sort
-      </span>
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value as SortMethod)}
-        className="w-full rounded-md border border-white/15 bg-equ-dark px-2 py-1.5 text-white shadow-sm focus:border-equ-teal focus:outline-none focus:ring-1 focus:ring-equ-teal"
-      >
-        {OPTIONS.map((opt) => (
-          <option key={opt.value} value={opt.value}>
-            {opt.label}
-          </option>
-        ))}
-      </select>
-    </label>
+      <span className="text-xs uppercase tracking-wide text-white/50">Sort</span>
+      <div className="flex flex-wrap gap-1.5">
+        {OPTIONS.map((opt) => {
+          const active = opt.value === value;
+          return (
+            <Link
+              key={opt.value}
+              href={`?sort=${opt.value}`}
+              scroll={false}
+              aria-current={active ? "true" : undefined}
+              className={`rounded-md border px-2 py-1.5 text-xs font-medium transition-colors ${
+                active
+                  ? "border-equ-teal bg-equ-teal/20 text-equ-teal"
+                  : "border-white/15 bg-equ-dark text-white/80 hover:border-equ-teal/50 hover:text-white"
+              }`}
+            >
+              {opt.label}
+            </Link>
+          );
+        })}
+      </div>
+    </div>
   );
 }

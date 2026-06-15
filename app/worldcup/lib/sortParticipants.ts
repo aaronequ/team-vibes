@@ -19,7 +19,8 @@ export function sortParticipants(
 }
 
 export function formatUpdatedAt(iso: string): string {
-  return new Date(iso).toLocaleString(undefined, {
+  return new Date(iso).toLocaleString("en-AU", {
+    timeZone: "Australia/Perth",
     dateStyle: "medium",
     timeStyle: "short",
   });

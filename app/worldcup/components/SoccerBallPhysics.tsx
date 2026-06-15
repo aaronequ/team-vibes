@@ -179,13 +179,14 @@ export function SoccerBallPhysics() {
 
     const rect = ball.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    const dx = centerX - event.clientX;
-    const dy = centerY - event.clientY;
-    const distance = Math.hypot(dx, dy) || 1;
 
-    s.vx = (dx / distance) * CLICK_IMPULSE;
-    s.vy = (dy / distance) * CLICK_IMPULSE;
+    // Always launch upward so every click keeps the ball in the air
+    // (keepy-uppy); where you strike it horizontally steers it left/right.
+    const dx = centerX - event.clientX;
+    const horizontal = Math.max(-1, Math.min(1, dx / (BALL_SIZE / 2)));
+
+    s.vx = horizontal * CLICK_IMPULSE * 0.5;
+    s.vy = -CLICK_IMPULSE;
 
     let newCount = juggleCountRef.current;
 

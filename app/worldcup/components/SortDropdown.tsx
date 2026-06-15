@@ -1,11 +1,9 @@
-"use client";
-
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
 
 import type { SortMethod } from "../lib/types";
 
 interface SortDropdownProps {
+  value: SortMethod;
   layout?: "inline" | "stacked";
 }
 
@@ -14,10 +12,7 @@ const OPTIONS: { value: SortMethod; label: string }[] = [
   { value: "name", label: "Name (A–Z)" },
 ];
 
-export function SortDropdown({ layout = "inline" }: SortDropdownProps) {
-  const searchParams = useSearchParams();
-  const value: SortMethod =
-    searchParams.get("sort") === "name" ? "name" : "still-in-first";
+export function SortDropdown({ value, layout = "inline" }: SortDropdownProps) {
   const isStacked = layout === "stacked";
 
   return (

@@ -1,21 +1,33 @@
-import { Suspense } from "react";
+import type { ReactNode } from "react";
 
-import { formatUpdatedAt } from "../lib/sortParticipants";
+import { formatUpdatedAt, sortParticipants } from "../lib/sortParticipants";
 import { getSweepstakesData } from "../lib/tournament/data";
-import { BallGame } from "./BallGame";
-import { ParticipantGrid } from "./ParticipantGrid";
-import { SortDropdown } from "./SortDropdown";
+import type { SortMethod } from "../lib/types";
+import { ParticipantCard } from "./ParticipantCard";
 import { SummaryBar } from "./SummaryBar";
 
 interface WorldCupBoardProps {
-  /** Display mode hides the interactive controls (sort + ball game). */
-  displayMode?: boolean;
+  /** Sort order, baked in by the page — the grid is sorted on the server. */
+  sortBy?: SortMethod;
+  /** Optional interactive sort control (sidebar). Omitted on the display board. */
+  sortControl?: ReactNode;
+  /** Optional interactive widget (the ball game). Omitted on the display board. */
+  ballGame?: ReactNode;
 }
 
+/**
+ * Pure server component: renders the whole board to static HTML. It imports no
+ * client components — interactive pieces are injected as `sortControl` /
+ * `ballGame` slots by the interactive route only, so the display route ships
+ * zero client JavaScript.
+ */
 export async function WorldCupBoard({
-  displayMode = false,
+  sortBy = "still-in-first",
+  sortControl,
+  ballGame,
 }: WorldCupBoardProps) {
   const data = await getSweepstakesData();
+  const participants = sortParticipants(data.participants, sortBy);
 
   const title = data.title;
   const equPrefix = title.match(/^equ/i)?.[0];
@@ -46,14 +58,10 @@ export async function WorldCupBoard({
             eliminated={data.summary.eliminated}
             layout="vertical"
           />
-          {!displayMode && (
-            <Suspense fallback={null}>
-              <SortDropdown layout="stacked" />
-            </Suspense>
-          )}
+          {sortControl}
         </div>
 
-        {!displayMode && <BallGame />}
+        {ballGame}
       </aside>
 
       <main className="relative z-10 flex-1 overflow-y-auto p-5 pb-14 min-w-0">
@@ -63,12 +71,11 @@ export async function WorldCupBoard({
           </div>
         )}
 
-        <Suspense fallback={null}>
-          <ParticipantGrid
-            participants={data.participants}
-            fixedSort={displayMode}
-          />
-        </Suspense>
+        <div className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(min(100%,16rem),1fr))] auto-rows-fr">
+          {participants.map((participant) => (
+            <ParticipantCard key={participant.name} participant={participant} />
+          ))}
+        </div>
       </main>
     </div>
   );

@@ -179,14 +179,15 @@ export function SoccerBallPhysics() {
 
     const rect = ball.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
-
-    // Always launch upward so every click keeps the ball in the air
-    // (keepy-uppy); where you strike it horizontally steers it left/right.
+    const centerY = rect.top + rect.height / 2;
     const dx = centerX - event.clientX;
-    const horizontal = Math.max(-1, Math.min(1, dx / (BALL_SIZE / 2)));
+    const dy = centerY - event.clientY;
+    const distance = Math.hypot(dx, dy) || 1;
 
-    s.vx = horizontal * CLICK_IMPULSE * 0.5;
-    s.vy = -CLICK_IMPULSE;
+    // Impulse is directed away from the click point, so you have to strike the
+    // ball precisely to keep it up — this is the original, skill-based feel.
+    s.vx = (dx / distance) * CLICK_IMPULSE;
+    s.vy = (dy / distance) * CLICK_IMPULSE;
 
     let newCount = juggleCountRef.current;
 

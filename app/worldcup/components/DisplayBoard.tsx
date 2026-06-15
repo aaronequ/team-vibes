@@ -55,13 +55,13 @@ const CSS = `
   border: 1px solid rgba(245, 138, 141, 0.4);
   border-radius: 8px;
   padding: 0.75rem;
-  font-size: 0.9rem;
+  font-size: 0.9rem; 
   margin-bottom: 1rem;
 }
-.wcd-grid { display: flex; flex-wrap: wrap; margin: -0.5rem; }
+.wcd-grid { display: flex; flex-wrap: wrap; margin: -0.5rem; } 
 .wcd-card {
-  flex: 1 1 14rem;
-  max-width: 22rem;
+  flex: 1 1 18.7rem;
+  max-width: 18.7rem;
   margin: 0.5rem;
   background: #ffffff;
   border: 1px solid #e4d7c9;

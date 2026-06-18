@@ -1,5 +1,3 @@
-import { connection } from "next/server";
-
 import { formatUpdatedAt, sortParticipants } from "../lib/sortParticipants";
 import { getSweepstakesData } from "../lib/tournament/data";
 
@@ -113,7 +111,6 @@ const CSS = `
 `;
 
 export async function DisplayBoard() {
-  await connection();
   let data;
   try {
     data = await getSweepstakesData();

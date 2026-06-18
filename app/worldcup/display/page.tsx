@@ -1,4 +1,4 @@
-import { Suspense } from "react";
+import { connection } from "next/server";
 import type { Metadata } from "next";
 
 import { DisplayBoard } from "../components/DisplayBoard";
@@ -8,15 +8,11 @@ export function generateMetadata(): Metadata {
   return { title: `${loadParticipantsFile().title} — Display` };
 }
 
-// Signage board for Fusion Signage on LG webOS / older SoC webviews.
-// DisplayBoard is wrapped in Suspense so it streams at request time — the
-// `use cache` inside populates on first request rather than at build time,
-// which avoids a build failure when the tournament API is unreachable from
-// Vercel's build machines.
-export default function WorldCupDisplayPage() {
-  return (
-    <Suspense fallback={null}>
-      <DisplayBoard />
-    </Suspense>
-  );
+// `connection()` opts this page out of build-time prerendering so the
+// tournament API is not called during `next build` (Vercel build machines
+// cannot reach it). The page renders synchronously at request time — no
+// Suspense/streaming — so it works on JS-less webOS signage panels.
+export default async function WorldCupDisplayPage() {
+  await connection();
+  return <DisplayBoard />;
 }

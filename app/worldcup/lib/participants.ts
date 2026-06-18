@@ -1,4 +1,4 @@
-import type { ApiTeam, ParticipantsFile } from "./types";
+import type { ParticipantsFile } from "./types";
 
 const RAW_PARTICIPANTS: ParticipantsFile = {
   title: "equ World Cup 2026",
@@ -121,39 +121,3 @@ export function loadParticipantsFile(): ParticipantsFile {
   return cache;
 }
 
-export function findUnknownParticipantCodes(
-  participants: ParticipantsFile,
-  teams: ApiTeam[],
-): string[] {
-  const validCodes = new Set(teams.map((t) => t.fifa_code.toUpperCase()));
-  const unknown: string[] = [];
-
-  for (const participant of participants.participants) {
-    for (const country of participant.countries) {
-      if (!validCodes.has(country.fifaCode)) {
-        unknown.push(`${country.fifaCode} (${participant.name})`);
-      }
-    }
-  }
-
-  return unknown;
-}
-
-export function getParticipantsFile(teams: ApiTeam[]): ParticipantsFile {
-  const data = loadParticipantsFile();
-
-  // Surface unknown FIFA codes as a warning rather than failing the whole
-  // dashboard. Unknown codes still render gracefully (the raw code is shown
-  // and the country stays "active"), so a single config typo — or the small
-  // synthetic team set used by MOCK_TOURNAMENT — should not 500 the page.
-  if (teams.length > 0) {
-    const unknown = findUnknownParticipantCodes(data, teams);
-    if (unknown.length > 0) {
-      console.warn(
-        `worldcup: ${unknown.length} unknown FIFA code(s) in participants: ${unknown.join(", ")}`,
-      );
-    }
-  }
-
-  return data;
-}

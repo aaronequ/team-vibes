@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { connection } from "next/server";
 import type { Metadata } from "next";
 
@@ -8,11 +9,19 @@ export function generateMetadata(): Metadata {
   return { title: `${loadParticipantsFile().title} — Display` };
 }
 
-// `connection()` opts this page out of build-time prerendering so the
-// tournament API is not called during `next build` (Vercel build machines
-// cannot reach it). The page renders synchronously at request time — no
-// Suspense/streaming — so it works on JS-less webOS signage panels.
-export default async function WorldCupDisplayPage() {
+// `connection()` must be called inside a child component wrapped in <Suspense>
+// (required by this version of Next.js). It opts the component out of
+// build-time prerendering so the tournament API is not called during
+// `next build` (Vercel build machines cannot reach it).
+async function DisplayBoardDeferred() {
   await connection();
   return <DisplayBoard />;
+}
+
+export default function WorldCupDisplayPage() {
+  return (
+    <Suspense fallback={null}>
+      <DisplayBoardDeferred />
+    </Suspense>
+  );
 }

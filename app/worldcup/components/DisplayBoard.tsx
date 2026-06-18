@@ -1,5 +1,7 @@
 import { formatUpdatedAt, sortParticipants } from "../lib/sortParticipants";
+import { loadParticipantsFile } from "../lib/participants";
 import { getSweepstakesData } from "../lib/tournament/data";
+import { buildFallbackSweepstakesResponse } from "../lib/tournament/sweepstakes";
 
 /*
  * Self-contained signage board for Fusion Signage on LG webOS (and the rest of
@@ -115,18 +117,7 @@ export async function DisplayBoard() {
   try {
     data = await getSweepstakesData();
   } catch {
-    return (
-      <>
-        <style dangerouslySetInnerHTML={{ __html: CSS }} />
-        <div className="wcd-root">
-          <main className="wcd-main" style={{ flex: "1 1 auto" }}>
-            <div className="wcd-error">
-              Tournament data unavailable — will retry automatically.
-            </div>
-          </main>
-        </div>
-      </>
-    );
+    data = buildFallbackSweepstakesResponse(loadParticipantsFile());
   }
   const participants = sortParticipants(data.participants, "still-in-first");
 

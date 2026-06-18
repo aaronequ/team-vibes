@@ -96,6 +96,31 @@ function findNextMatch(
   };
 }
 
+export function buildFallbackSweepstakesResponse(
+  participantsFile: ParticipantsFile,
+): SweepstakesResponse {
+  const participants: ParticipantView[] = participantsFile.participants.map(
+    (entry) => ({
+      name: entry.name,
+      countries: entry.countries.map((c) => ({
+        fifaCode: c.fifaCode.toUpperCase(),
+        name: c.fifaCode.toUpperCase(),
+        flagUrl: "",
+        status: "active" as TeamStatus,
+        nextMatch: null,
+      })),
+      status: "active" as TeamStatus,
+    }),
+  );
+
+  return {
+    title: participantsFile.title,
+    participants,
+    summary: { total: participants.length, stillIn: participants.length, eliminated: 0 },
+    status: { updatedAt: new Date().toISOString(), stale: true },
+  };
+}
+
 export function buildSweepstakesResponse(
   participantsFile: ParticipantsFile,
   poller: PollerState,

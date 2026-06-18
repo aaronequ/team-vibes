@@ -12,7 +12,11 @@ async function fetchJson<T>(path: string): Promise<T> {
   // (see lib/tournament/data.ts), which owns caching and revalidation.
   const response = await fetch(url, {
     headers: { Accept: "application/json" },
-    signal: AbortSignal.timeout(8000),
+    // worldcup26.ir is slow: /get/games alone measures ~11s, and the old 8s
+    // limit aborted every fetch, surfacing as a TimeoutError + fallback. This
+    // runs on cache miss / hourly background revalidation (never on the user's
+    // critical path thanks to `use cache` SWR), so a generous timeout is safe.
+    signal: AbortSignal.timeout(20000),
   });
 
   if (!response.ok) {

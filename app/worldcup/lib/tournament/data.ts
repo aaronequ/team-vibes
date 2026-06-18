@@ -1,11 +1,15 @@
 import { cacheLife } from "next/cache";
+import { PHASE_PRODUCTION_BUILD } from "next/constants";
 
-import { getParticipantsFile } from "../participants";
+import { loadParticipantsFile } from "../participants";
 import type { PollerState, SweepstakesResponse } from "../types";
 import { fetchTournamentSnapshot, getMockTournamentSnapshot } from "./client";
 import { tournamentConfig } from "./config";
 import { buildTeamsByFifa, computeEliminatedFifaCodes } from "./elimination";
-import { buildSweepstakesResponse } from "./sweepstakes";
+import {
+  buildFallbackSweepstakesResponse,
+  buildSweepstakesResponse,
+} from "./sweepstakes";
 
 /**
  * Builds the sweepstakes payload from the upstream tournament feed.
@@ -20,6 +24,17 @@ import { buildSweepstakesResponse } from "./sweepstakes";
  */
 export async function getSweepstakesData(): Promise<SweepstakesResponse> {
   "use cache";
+
+  // Next warms `use cache` entries during `next build`, which would call the
+  // tournament API from the build machine — it's usually unreachable there and
+  // logs a build-time fetch error. Skip the network at build and cache a
+  // short-lived fallback so the first real request revalidates with live data
+  // within seconds (or misses the expired entry and fetches live immediately).
+  if (process.env.NEXT_PHASE === PHASE_PRODUCTION_BUILD) {
+    cacheLife("seconds");
+    return buildFallbackSweepstakesResponse(loadParticipantsFile());
+  }
+
   cacheLife("hours");
 
   try {
@@ -36,10 +51,9 @@ export async function getSweepstakesData(): Promise<SweepstakesResponse> {
       stale: false,
     };
 
-    const participantsFile = getParticipantsFile([...teamsByFifa.values()]);
+    const participantsFile = loadParticipantsFile();
     return buildSweepstakesResponse(participantsFile, poller);
   } catch (err) {
-    console.error("Tournament data refresh failed:", err);
     // Next.js 16's use cache runtime tries to set DOMException.message when
     // re-throwing, but that property is read-only, causing an unhandledRejection.
     // Wrap it in a plain Error so the rethrow is safe.

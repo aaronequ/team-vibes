@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 
 import { DisplayBoard } from "../components/DisplayBoard";
@@ -7,10 +8,15 @@ export function generateMetadata(): Metadata {
   return { title: `${loadParticipantsFile().title} — Display` };
 }
 
-// Signage board for Fusion Signage on LG webOS / older SoC webviews. Uses
-// DisplayBoard, which ships its own inline old-browser-safe CSS instead of the
-// app's Tailwind v4 styles (which those engines cannot parse). Fully
-// server-rendered static HTML, refreshed hourly via the `use cache` layer.
+// Signage board for Fusion Signage on LG webOS / older SoC webviews.
+// DisplayBoard is wrapped in Suspense so it streams at request time — the
+// `use cache` inside populates on first request rather than at build time,
+// which avoids a build failure when the tournament API is unreachable from
+// Vercel's build machines.
 export default function WorldCupDisplayPage() {
-  return <DisplayBoard />;
+  return (
+    <Suspense fallback={null}>
+      <DisplayBoard />
+    </Suspense>
+  );
 }

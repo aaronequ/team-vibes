@@ -111,7 +111,23 @@ const CSS = `
 `;
 
 export async function DisplayBoard() {
-  const data = await getSweepstakesData();
+  let data;
+  try {
+    data = await getSweepstakesData();
+  } catch {
+    return (
+      <>
+        <style dangerouslySetInnerHTML={{ __html: CSS }} />
+        <div className="wcd-root">
+          <main className="wcd-main" style={{ flex: "1 1 auto" }}>
+            <div className="wcd-error">
+              Tournament data unavailable — will retry automatically.
+            </div>
+          </main>
+        </div>
+      </>
+    );
+  }
   const participants = sortParticipants(data.participants, "still-in-first");
 
   const title = data.title;
@@ -153,12 +169,6 @@ export async function DisplayBoard() {
         </aside>
 
         <main className="wcd-main">
-          {data.status.error && (
-            <div className="wcd-error">
-              Tournament data refresh failed: {data.status.error}
-            </div>
-          )}
-
           <div className="wcd-grid">
             {participants.map((participant) => {
               const isOut = participant.status === "eliminated";

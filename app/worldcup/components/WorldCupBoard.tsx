@@ -26,7 +26,25 @@ export async function WorldCupBoard({
   sortControl,
   ballGame,
 }: WorldCupBoardProps) {
-  const data = await getSweepstakesData();
+  let data;
+  try {
+    data = await getSweepstakesData();
+  } catch {
+    return (
+      <div className="relative flex h-screen overflow-hidden bg-equ-stone-2 text-equ-dark">
+        <aside className="relative z-10 w-64 shrink-0 bg-equ-dark-2 border-r border-equ-slate/30 flex flex-col overflow-y-auto">
+          <div className="p-5 flex flex-col gap-5 flex-1">{sortControl}</div>
+          {ballGame}
+        </aside>
+        <main className="relative z-10 flex-1 overflow-y-auto p-5">
+          <div className="bg-equ-salmon-light border border-equ-salmon/40 rounded-lg p-3 text-sm text-equ-dark">
+            Tournament data unavailable — will retry automatically.
+          </div>
+        </main>
+      </div>
+    );
+  }
+
   const participants = sortParticipants(data.participants, sortBy);
 
   const title = data.title;
@@ -65,12 +83,6 @@ export async function WorldCupBoard({
       </aside>
 
       <main className="relative z-10 flex-1 overflow-y-auto p-5 pb-14 min-w-0">
-        {data.status.error && (
-          <div className="mb-4 bg-equ-salmon-light border border-equ-salmon/40 rounded-lg p-3 text-sm text-equ-dark">
-            Tournament data refresh failed: {data.status.error}
-          </div>
-        )}
-
         <div className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(min(100%,16rem),1fr))] auto-rows-fr">
           {participants.map((participant) => (
             <ParticipantCard key={participant.name} participant={participant} />

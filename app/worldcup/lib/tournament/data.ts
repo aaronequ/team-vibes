@@ -40,6 +40,12 @@ export async function getSweepstakesData(): Promise<SweepstakesResponse> {
     return buildSweepstakesResponse(participantsFile, poller);
   } catch (err) {
     console.error("Tournament data refresh failed:", err);
+    // Next.js 16's use cache runtime tries to set DOMException.message when
+    // re-throwing, but that property is read-only, causing an unhandledRejection.
+    // Wrap it in a plain Error so the rethrow is safe.
+    if (err instanceof DOMException) {
+      throw new Error(`${err.name}: ${err.message}`);
+    }
     // Rethrowing lets `use cache` serve the last successful cached entry
     // (stale-while-revalidate) instead of caching the error state itself.
     throw err;

@@ -1,9 +1,8 @@
-import { NextResponse } from 'next/server';
+import { NextResponse, connection } from 'next/server';
 import { getGemini, DEFAULT_MODEL } from '@/lib/gemini';
 
-export const dynamic = 'force-dynamic';
-
 export async function GET() {
+  await connection();
   try {
     const ai = getGemini();
     const response = await ai.models.generateContent({

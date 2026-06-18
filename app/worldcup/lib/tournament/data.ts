@@ -15,9 +15,8 @@ import { buildSweepstakesResponse } from "./sweepstakes";
  * result every hour (stale-while-revalidate), which is the data-refresh
  * cadence the dashboard needs — no request-driven in-memory poller required.
  *
- * Fetch failures degrade gracefully: participants come from a static file, so
- * we still render every participant as "active" and surface the error in the
- * status banner rather than failing the prerender.
+ * Fetch failures rethrow so `use cache` falls back to the last successful
+ * cached entry rather than caching the error state for up to its expire window.
  */
 export async function getSweepstakesData(): Promise<SweepstakesResponse> {
   "use cache";
@@ -40,18 +39,9 @@ export async function getSweepstakesData(): Promise<SweepstakesResponse> {
     const participantsFile = getParticipantsFile([...teamsByFifa.values()]);
     return buildSweepstakesResponse(participantsFile, poller);
   } catch (err) {
-    const message = err instanceof Error ? err.message : String(err);
-    console.error("Tournament data refresh failed:", message);
-
-    const poller: PollerState = {
-      eliminatedFifaCodes: new Set(),
-      teamsByFifa: new Map(),
-      games: [],
-      updatedAt: new Date().toISOString(),
-      stale: true,
-      error: message,
-    };
-
-    return buildSweepstakesResponse(getParticipantsFile([]), poller);
+    console.error("Tournament data refresh failed:", err);
+    // Rethrowing lets `use cache` serve the last successful cached entry
+    // (stale-while-revalidate) instead of caching the error state itself.
+    throw err;
   }
 }

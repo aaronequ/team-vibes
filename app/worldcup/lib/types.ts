@@ -43,7 +43,7 @@ export interface ApiGame {
   home_score: string;
   away_score: string;
   group: string;
-  finished: string;
+  finished?: string | null;
   type: string;
   local_date?: string;
   persian_date?: string;

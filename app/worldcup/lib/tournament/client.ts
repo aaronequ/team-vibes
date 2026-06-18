@@ -12,6 +12,7 @@ async function fetchJson<T>(path: string): Promise<T> {
   // (see lib/tournament/data.ts), which owns caching and revalidation.
   const response = await fetch(url, {
     headers: { Accept: "application/json" },
+    signal: AbortSignal.timeout(8000),
   });
 
   if (!response.ok) {

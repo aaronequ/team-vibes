@@ -15,7 +15,7 @@ function parseNum(value: string): number {
 }
 
 function isFinished(game: ApiGame): boolean {
-  return game.finished.toUpperCase() === "TRUE";
+  return game.finished?.toUpperCase() === "TRUE";
 }
 
 function compareStandings(a: ApiGroupStanding, b: ApiGroupStanding): number {

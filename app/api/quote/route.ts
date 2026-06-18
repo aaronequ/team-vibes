@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getGemini, DEFAULT_MODEL } from '@/lib/gemini';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const ai = getGemini();
